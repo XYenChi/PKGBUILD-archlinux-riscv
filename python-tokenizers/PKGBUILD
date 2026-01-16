@@ -1,0 +1,65 @@
+# Maintainer: Your Name <you@example.com>
+
+pkgname=python-tokenizers
+pkgver=0.22.2
+pkgrel=1
+pkgdesc="Fast state-of-the-art tokenizers optimized for research and production"
+arch=(riscv64)
+url="https://github.com/huggingface/tokenizers"
+license=(Apache)
+depends=(
+  'icu>=78'
+  oniguruma
+  python
+  python-numpy
+  glibc
+  gcc-libs
+)
+optdepends=('python-sentencepiece: for SentencePiece support')
+makedepends=(
+  rust
+  cargo
+  pkgconf
+  python-maturin
+  python-setuptools
+  python-wheel
+  python-build
+  python-installer
+)
+checkdepends=(
+  python-pytest
+)
+source=(
+  "$pkgname-$pkgver.tar.gz::https://github.com/huggingface/tokenizers/archive/refs/tags/v$pkgver.tar.gz"
+)
+sha256sums=('SKIP')
+
+build() {
+  cd tokenizers-$pkgver/bindings/python
+
+  export CFLAGS="-O2 -pipe"
+  export CXXFLAGS="${CFLAGS}"
+
+  export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
+  export CARGO_TARGET_DIR=../../target
+  export RUSTONIG_STATIC_LIBONIG=1
+  export LDFLAGS="${LDFLAGS} -lonig"
+  export RUSTFLAGS="-C target-feature=+a,+c,+m,+d,+f"
+  # export CC=/usr/bin/gcc
+  #  python -m build --wheel --no-isolation
+  # 使用 maturin 构建 python 扩展
+  maturin build \
+    --release \
+    --strip \
+    --interpreter python \
+    --manylinux off
+}
+
+package() {
+  cd tokenizers-$pkgver
+
+  python -m installer \
+    --destdir="$pkgdir" \
+    target/wheels/*.whl
+}
+
