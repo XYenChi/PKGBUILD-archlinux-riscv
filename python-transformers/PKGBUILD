@@ -1,0 +1,29 @@
+# Maintainer: XYenChi <oriachiuan@gmail.com>
+pkgname=python-transformers
+pkgver=4.57.1
+pkgrel=1
+pkgdesc="State-of-the-art Natural Language Processing for JAX, PyTorch and TensorFlow (Huggingface Transformers)"
+url="https://github.com/huggingface/transformers"
+license=("Apache")
+arch=('riscv64')    # 纯 Python 包，任意架构
+depends=(
+  "python"
+)
+makedepends=('python-setuptools' 'python-wheel' 'python-distutils-extra')
+source=(
+  "https://files.pythonhosted.org/packages/source/t/transformers/transformers-${pkgver}.tar.gz"
+)
+sha256sums=('f06c837959196c75039809636cd964b959f6604b75b8eeec6fdfc0440b89cc55')
+
+build() {
+  cd "$srcdir/transformers-${pkgver}"
+  python setup.py build
+}
+
+package() {
+  cd "$srcdir/transformers-${pkgver}"
+
+  python setup.py install --root="$pkgdir" \
+    --optimize=1
+}
+
