@@ -1,0 +1,42 @@
+# Maintainer: XYenChi <oriachiuan@gmail.com>
+pkgname=python-huggingface-hub
+pkgver=0.34.0
+pkgrel=1
+pkgdesc="Client library to interact with the Hugging Face Hub"
+url="https://github.com/huggingface/huggingface_hub"
+license=('Apache')
+arch=('riscv64')
+
+depends=(
+  'python'
+  'python-requests'
+  'python-tqdm'
+  'python-packaging'
+  'python-filelock'
+  'python-pyyaml'
+)
+
+makedepends=(
+  'python-setuptools'
+  'python-wheel'
+)
+
+source=(
+  "https://files.pythonhosted.org/packages/source/h/huggingface_hub/huggingface_hub-${pkgver}.tar.gz"
+)
+
+sha256sums=('2c6f373fac66b1afc2fe47efd8e603a876935dbd669f966231f265da5c353e25')
+
+build() {
+  cd "$srcdir/huggingface_hub-${pkgver}"
+  python setup.py build
+}
+
+package() {
+  cd "$srcdir/huggingface_hub-${pkgver}"
+
+  python setup.py install \
+    --root="$pkgdir" \
+    --optimize=1
+}
+
