@@ -1,0 +1,36 @@
+# Maintainer: XYenChi <oriachiuan@gmail.com>
+pkgname=python-regex
+pkgver=2023.12.25
+pkgrel=1
+pkgdesc="Alternative regular expression module for Python"
+url="https://github.com/mrabarnett/mrab-regex"
+license=('PSF')
+arch=('riscv64')
+
+depends=(
+  'python'
+)
+makedepends=(
+  'python-setuptools'
+  'python-wheel'
+)
+
+source=(
+  "https://files.pythonhosted.org/packages/source/r/regex/regex-${pkgver}.tar.gz"
+)
+
+sha256sums=('SKIP')
+
+build() {
+  cd "$srcdir/regex-${pkgver}"
+  python setup.py build
+}
+
+package() {
+  cd "$srcdir/regex-${pkgver}"
+
+  python setup.py install \
+    --root="$pkgdir" \
+    --optimize=1
+}
+
